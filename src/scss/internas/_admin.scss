@@ -1,0 +1,6 @@
+.alerta {
+    padding: .5rem;
+    &.error{
+        background-color: $rojo;
+    }
+}
