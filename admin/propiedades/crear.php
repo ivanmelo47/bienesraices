@@ -4,6 +4,8 @@
     $db = conectarDB();
 
     // Consultar para obtener los vendedores
+    $consulta = "SELECT * FROM `bienesraices_crud`.`vendedores`";
+    $resultado = mysqli_query($db, $consulta);
 
     // Arreglo con mensajes de errores
     $errores = [];
@@ -14,7 +16,7 @@
     $habitaciones = '';
     $wc = '';
     $estacionamiento = '';
-    $vendedor = '';
+    $vendedorId = '';
 
     // Toda esta seccion se utiliza para insertar datos despues de enviar el formulario
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -23,13 +25,14 @@
         echo "</pre>"; */
 
         // Captura de datos
-        $titulo = $_POST['titulo'];
-        $precio = $_POST['precio'];
-        $descripcion = $_POST['descripcion'];
-        $habitaciones = $_POST['habitaciones'];
-        $wc = $_POST['wc'];
-        $estacionamiento = $_POST['estacionamiento'];
-        $vendedor = $_POST['vendedor'];
+        $titulo = mysqli_real_escape_string($db, $_POST['titulo']);
+        $precio = mysqli_real_escape_string($db, $_POST['precio']);
+        $descripcion = mysqli_real_escape_string($db, $_POST['descripcion']);
+        $habitaciones = mysqli_real_escape_string($db, $_POST['habitaciones']);
+        $wc = mysqli_real_escape_string($db, $_POST['wc']);
+        $estacionamiento = mysqli_real_escape_string($db, $_POST['estacionamiento']);
+        $vendedorId = mysqli_real_escape_string($db, $_POST['vendedor']);
+        $creado = date('Y/m/d');
 
         // Arreglo de errores
         if (!$titulo) {
@@ -50,7 +53,7 @@
         if (!$estacionamiento) {
             $errores[] = "El numero de lugares de estacionamiento es obligatorio";
         }
-        if (!$vendedor) {
+        if (!$vendedorId) {
             $errores[] = "Elige un vendedor";
         }
         /* echo "<pre>";
@@ -60,9 +63,13 @@
         // Revisar que el arreglo de errores este vacio
         if (empty($errores)) {
             // Insertar en la base de datos
-            $query = "INSERT INTO `bienesraices_crud`.`propiedades` (`titulo`, `precio`,`descripcion`, `habitaciones`, `wc`, `estacionamiento`, `vendedores_id`) VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$vendedor')";
+            $query = "INSERT INTO `bienesraices_crud`.`propiedades` (`titulo`, `precio`,`descripcion`, `habitaciones`, `wc`, `estacionamiento`, `creado`,`vendedores_id`) VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado','$vendedorId')";
 
             $resultado = mysqli_query($db, $query);
+            if ($resultado) {
+                // Redireccionar al usuario.
+                header('Location: /admin');
+            }
         }
         
     }// Fin de la seccion
@@ -142,8 +149,9 @@
             <legend>Vendedor</legend>
             <select name="vendedor" value="<?php echo $vendedor; ?>">
                 <option value="">--Seleccione--</option>
-                <option value="1">Juan</option>
-                <option value="2">Maria</option>
+                <?php while($vendedor = mysqli_fetch_assoc($resultado)): ?>
+                    <option <?php echo $vendedorId === $vendedor['id'] ? 'selected' : ''?> value="<?php echo $vendedor['id']; ?>"><?php echo $vendedor['nombre']." ".$vendedor['apellido']; ?></option>
+                <?php endwhile; ?>
             </select>
         </fieldset>
 
