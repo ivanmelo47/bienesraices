@@ -1,27 +1,7 @@
 <?php
-    require '../../includes/funciones.php';
-
-    // Restriccon de usuario por inicio de sesion
-    $auth = estaAuntenticado();
-    if (!$auth) {
-        header('Location: /');
-    }
-
-    // Validar la URL por ID valido
-    $id = $_GET['id'];
-    $id = filter_var($id, FILTER_VALIDATE_INT);
-    if(!$id){
-        header('Location: /admin');
-    }
-
     // Base de datos
     require '../../includes/config/database.php';
     $db = conectarDB();
-
-    // Obtener datos de la propiedad
-    $consulta = "SELECT * FROM `propiedades` WHERE id = $id";
-    $resultado = mysqli_query($db, $consulta);
-    $propiedad = mysqli_fetch_assoc($resultado);
 
     // Consultar para obtener los vendedores
     $consulta = "SELECT * FROM `vendedores`";
@@ -30,14 +10,13 @@
     // Arreglo con mensajes de errores
     $errores = [];
 
-    $titulo = $propiedad['titulo'];
-    $precio = $propiedad['precio'];
-    $descripcion = $propiedad['descripcion'];
-    $habitaciones = $propiedad['habitaciones'];
-    $wc = $propiedad['wc'];
-    $estacionamiento = $propiedad['estacionamiento'];
-    $vendedorId = $propiedad['vendedores_id'];
-    $imagenPropiedad = $propiedad['imagen'];
+    $titulo = '';
+    $precio = '';
+    $descripcion = '';
+    $habitaciones = '';
+    $wc = '';
+    $estacionamiento = '';
+    $vendedorId = '';
 
     // Toda esta seccion se utiliza para insertar datos despues de enviar el formulario
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -81,11 +60,11 @@
             $errores[] = "Elige un vendedor";
         }
 
-        /* if (!$imagen['name'] || $imagen['error']) {
+        if (!$imagen['name'] || $imagen['error']) {
             $errores[] = "La imagen es obligatoria";
-        } */
+        }
         //Validar Imagen por tamanio(100kb maximo)
-        $medida = 1000 * 1000;
+        $medida = 1000 * 100;
         if ($imagen['size'] > $medida) {
             $errores[] = "La imagen es muy pesada";
         }
@@ -97,51 +76,39 @@
         // Revisar que el arreglo de errores este vacio
         if (empty($errores)) {
 
+            /* Subida de archivos */
+
             // Crear carpeta
             $carpetaImagenes = '../../imagenes/';
             if (!is_dir($carpetaImagenes)) {
                 mkdir($carpetaImagenes);
             }
 
-            $nombreImagen = '';
+            // Generar un nombre unico
+            $nombreImagen = md5( uniqid( rand(), true ) ) . ".jpg";
 
-            /* Subida de archivos */
-            if($imagen['name']){
-                //Eliminar la imagen anterior
-                unlink($carpetaImagenes . $propiedad['imagen']);
-
-                // Generar un nombre unico
-                $nombreImagen = md5( uniqid( rand(), true ) ) . ".jpg";
-
-                // Subir la imagen
-                move_uploaded_file($imagen['tmp_name'], $carpetaImagenes.$nombreImagen);
-            } else {
-                $nombreImagen = $propiedad['imagen'];
-            }
+            // Subir la imagen
+            move_uploaded_file($imagen['tmp_name'], $carpetaImagenes.$nombreImagen);
 
 
-            // Actualizar en la base de datos
-            $query = "UPDATE `propiedades` SET `titulo` = '$titulo', `precio` = '$precio', `imagen` = '$nombreImagen',`descripcion` = '$descripcion', `habitaciones` = $habitaciones, `wc` = $wc, `estacionamiento` = $estacionamiento, `vendedores_id` = '$vendedorId' WHERE `propiedades`.`id` = $id";
-
-            //echo $query;
-
-
+            // Insertar en la base de datos
+            $query = "INSERT INTO `propiedades` (`titulo`, `precio`,`imagen`,`descripcion`, `habitaciones`, `wc`, `estacionamiento`, `creado`,`vendedores_id`) VALUES ('$titulo', '$precio', '$nombreImagen','$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado','$vendedorId')";
 
             $resultado = mysqli_query($db, $query);
             if ($resultado) {
                 // Redireccionar al usuario.
-                header('Location: /admin?resultado=2');
+                header('Location: /admin?resultado=1');
             }
         }
         
     }// Fin de la seccion
 
-    
+    require '../../includes/funciones.php';
     incluirTemplate('header');
 ?>
 
     <main class="contenedor seccion">
-        <h1>Actualizar</h1>
+        <h1>Crear</h1>
         <a href="/admin" class="boton boton-verde">Volver</a>
 
         <?php foreach($errores as $error): ?>
@@ -151,7 +118,7 @@
         <?php endforeach; ?>
         
 
-        <form action="" class="formulario" method="POST" enctype="multipart/form-data">
+        <form action="" class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">
         <fieldset>
             <legend>Información General</legend>
 
@@ -174,7 +141,6 @@
                    id="imagen" 
                    accept="image/jpeg, image/png"
                    name="imagen">
-            <img src="/imagenes/<?php echo $imagenPropiedad ?>" alt="Imagen de la propiedad" class="imagen-small">
 
             <label for="descripcion">Descripcion:</label>
             <textarea id="descripcion" name="descripcion"><?php echo $descripcion; ?></textarea>
@@ -213,15 +179,13 @@
             <legend>Vendedor</legend>
             <select name="vendedor" value="<?php echo $vendedor; ?>">
                 <option value="">--Seleccione--</option>
-
                 <?php while($vendedor = mysqli_fetch_assoc($resultado)): ?>
-                <option <?php echo $vendedorId === $vendedor['id'] ? 'selected' : ''?> value="<?php echo $vendedor['id']; ?>"><?php echo $vendedor['nombre']." ".$vendedor['apellido']; ?></option>
+                    <option <?php echo $vendedorId === $vendedor['id'] ? 'selected' : ''?> value="<?php echo $vendedor['id']; ?>"><?php echo $vendedor['nombre']." ".$vendedor['apellido']; ?></option>
                 <?php endwhile; ?>
-                
             </select>
         </fieldset>
 
-        <input type="submit" value="Actualizar Propiedad" class="boton boton-verde">
+        <input type="submit" value="Crear Propiedad" class="boton boton-verde">
     </form>
     </main>
 

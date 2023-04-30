@@ -1,4 +1,11 @@
 <?php
+    require '../includes/funciones.php';
+
+    // Restriccon de usuario por inicio de sesion
+    $auth = estaAuntenticado();
+    if (!$auth) {
+        header('Location: /');
+    }
 
     // Importar base de datos
     require '../includes/config/database.php';
@@ -35,7 +42,6 @@
     }
     
     // Incluye template
-    require '../includes/funciones.php';
     incluirTemplate('header');
 ?>
     <main class="contenedor seccion">

@@ -16,7 +16,7 @@
                 </a>
 
                 <div class="mobile-menu">
-                    <img src="build/img/barras.svg" alt="Icono menu responsive">
+                    <img src="/build/img/barras.svg" alt="Icono menu responsive">
                 </div>
 
                 <div class="derecha">

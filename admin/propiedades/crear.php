@@ -1,4 +1,12 @@
 <?php
+    require '../../includes/funciones.php';
+
+    // Restriccon de usuario por inicio de sesion
+    $auth = estaAuntenticado();
+    if (!$auth) {
+        header('Location: /');
+    }
+
     // Base de datos
     require '../../includes/config/database.php';
     $db = conectarDB();
@@ -103,7 +111,6 @@
         
     }// Fin de la seccion
 
-    require '../../includes/funciones.php';
     incluirTemplate('header');
 ?>
 

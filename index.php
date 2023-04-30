@@ -43,7 +43,7 @@
     <section class="imagen-contacto">
         <h2>Encuentra la Casa de tus suenos</h2>
         <p>Llene el formulario de contacto y un asesor se pondra en contacto contigo a la brevedad</p>
-        <a href="contacto.html" class="boton-amarillo">Contactanos</a>
+        <a href="contacto.php" class="boton-amarillo">Contactanos</a>
     </section> <!-- Cierre de Contactanos -->
 
     <div class="contenedor seccion seccion-inferior">
