@@ -40,6 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['usuario'] = $usuario['email']; //>USO DE UNA SUPER GLOBAL
                 $_SESSION['login'] = true;
 
+                header('Location: /admin');
+
             }else {
                 $errores[] = "El password es incorrecto";
             }
