@@ -8,7 +8,7 @@
     .dark-mode-boton {
         width: 3rem;
         margin-top: 3rem;
-        margin-bottom: 2rem;
+        margin-bottom: 3rem;
         filter: invert(100%);
         &:hover{
             cursor: pointer;
@@ -49,6 +49,7 @@
         font-size: 2.2rem;
         display: block;
         text-align: center;
+        transition: .5s;
 
         @include tablet {
             margin-right: 2rem;
@@ -58,6 +59,10 @@
                 margin-right: 0;
             }
         }
+
+        &:hover {
+            color: $verde;
+          }
     }
 }
 

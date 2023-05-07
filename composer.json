@@ -1,0 +1,17 @@
+{
+    "name": "ivanm/bienesraices",
+    "description": "Creando un proyecto con POO",
+    "type": "project",
+    "authors": [
+        {
+            "name": "ivanmelo47",
+            "email": "114496426+ivanmelo47@users.noreply.github.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "App\\": "./clases"
+        }
+    }
+}

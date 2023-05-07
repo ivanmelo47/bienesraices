@@ -1,5 +1,6 @@
 .boton-amarillo {
     @include boton($amarillo, inline-block);
+    width: 15rem;
 }
 
 .boton-amarillo-block {
@@ -15,6 +16,51 @@
     width: 100%
 }
 
+.boton-rojo {
+  @include boton($rojo, inline-block);
+  width: 15rem;
+}
+
 .boton-verde-block {
     @include boton($verde, block);
+}
+
+.botones-tabla {
+  width: 15rem;
+  a{
+    padding: .5rem;
+  }
+}
+
+.boton-login-logout {
+  @include boton($amarillo, inline-block);
+  width: auto;
+}
+
+
+/* ----------------------------- */
+.boton-login {
+  width: 13rem;
+  height: 5rem;
+  background-color: transparent;
+  border: 2px solid $blanco;
+  outline: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  font-size: 1.1em;
+  color: $blanco;
+  font-weight: 500;
+  transition: 0.5s;
+  &:hover {
+    background-color: $blanco;
+    color: $negroMedio;
+    p {
+      color: $negroMedio;
+    }
+  }
+
+  p {
+    margin-top: .5rem;
+    color: $blanco;
+  }
 }

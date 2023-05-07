@@ -1,16 +1,12 @@
 <?php
-    require 'includes/funciones.php';
-    incluirTemplate('header');
-
     $id = $_GET['id'];
     $id = filter_var($id, FILTER_VALIDATE_INT);
     if (!$id) {
         header('Location: /');
     }
 
-    // Importar la conexion
-    /* require __DIR__.'/../config/database.php'; */
-    require 'includes/config/database.php';
+    require 'includes/app.php';
+
     $db = conectarDB();
 
     //Consultar
@@ -22,6 +18,8 @@
         header('Location: /');
     }
     $propiedad = mysqli_fetch_assoc($resultado);
+
+    incluirTemplate('header');
 ?>
 
     <main class="contenedor seccion contenido-centrado">
