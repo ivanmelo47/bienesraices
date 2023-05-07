@@ -1,15 +1,8 @@
 <?php
-    require '../includes/funciones.php';
+    require '../includes/app.php';
 
     // Restriccon de usuario por inicio de sesion
-    $auth = estaAuntenticado();
-    if (!$auth) {
-        header('Location: /');
-    }
-
-    // Importar base de datos
-    require '../includes/config/database.php';
-    $db = conectarDB();
+    estaAuntenticado();
 
     // Escribir el query
     $query = "SELECT * FROM `propiedades`";

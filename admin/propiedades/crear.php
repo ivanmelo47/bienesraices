@@ -1,14 +1,12 @@
 <?php
-    require '../../includes/funciones.php';
+    require '../../includes/app.php';
+
+    use App\Propiedad;
+    use Intervention\Image\ImageManagerStatic as Image; //https://image.intervention.io/v2/introduction/installation
 
     // Restriccon de usuario por inicio de sesion
-    $auth = estaAuntenticado();
-    if (!$auth) {
-        header('Location: /');
-    }
+    estaAuntenticado();
 
-    // Base de datos
-    require '../../includes/config/database.php';
     $db = conectarDB();
 
     // Consultar para obtener los vendedores
@@ -16,7 +14,7 @@
     $resultado = mysqli_query($db, $consulta);
 
     // Arreglo con mensajes de errores
-    $errores = [];
+    $errores = Propiedad::getErrores();
 
     $titulo = '';
     $precio = '';
@@ -28,81 +26,39 @@
 
     // Toda esta seccion se utiliza para insertar datos despues de enviar el formulario
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        /* echo "<pre>";
-        var_dump($_POST);
-        echo "</pre>"; */
+        //Crea una nueva instancia
+        $propiedad = new Propiedad($_POST);
 
-        // Captura de datos
-        $titulo = mysqli_real_escape_string($db, $_POST['titulo']);
-        $precio = mysqli_real_escape_string($db, $_POST['precio']);
-        $descripcion = mysqli_real_escape_string($db, $_POST['descripcion']);
-        $habitaciones = mysqli_real_escape_string($db, $_POST['habitaciones']);
-        $wc = mysqli_real_escape_string($db, $_POST['wc']);
-        $estacionamiento = mysqli_real_escape_string($db, $_POST['estacionamiento']);
-        $vendedorId = mysqli_real_escape_string($db, $_POST['vendedor']);
-        $creado = date('Y/m/d');
-
-        // Asignar files a una variable
-        $imagen = $_FILES['imagen'];
-
-        // Arreglo de errores
-        if (!$titulo) {
-            $errores[] = "Debes añadir un titulo";
-        }
-        if (!$precio) {
-            $errores[] = "El precio es obligatorio";
-        }
-        if ( strlen($descripcion) < 50) {
-            $errores[] = "La descripcion es obligatoria y debe tener almenos 50 caracteres";
-        }
-        if (!$habitaciones) {
-            $errores[] = "El numero de habitaciones es obligatorio";
-        }
-        if (!$wc) {
-            $errores[] = "El numero de baños es obligatorio";
-        }
-        if (!$estacionamiento) {
-            $errores[] = "El numero de lugares de estacionamiento es obligatorio";
-        }
-        if (!$vendedorId) {
-            $errores[] = "Elige un vendedor";
-        }
-
-        if (!$imagen['name'] || $imagen['error']) {
-            $errores[] = "La imagen es obligatoria";
-        }
-        //Validar Imagen por tamanio(100kb maximo)
-        $medida = 1000 * 100;
-        if ($imagen['size'] > $medida) {
-            $errores[] = "La imagen es muy pesada";
-        }
+        /* Subida de archivos */
         
-        /* echo "<pre>";
-        var_dump($errores);
-        echo "</pre>"; */
+        // Generar un nombre unico
+        $nombreImagen = md5( uniqid( rand(), true ) ) . ".jpg";
+        // Setear imagen
+        //Realizar un resize a la imagen con Intervention
+        if($_FILES['imagen']['tmp_name']){
+        $image = Image::make($_FILES['imagen']['tmp_name'])->fit(600, 600);
+        //Entrega el nombre de la imagen
+        $propiedad->setImagen($nombreImagen);
+        }
 
-        // Revisar que el arreglo de errores este vacio
+
+        // Validar
+        $errores = $propiedad->validar();
+        //Revisar que el arreglo de errores este vacio
         if (empty($errores)) {
 
             /* Subida de archivos */
-
             // Crear carpeta
-            $carpetaImagenes = '../../imagenes/';
-            if (!is_dir($carpetaImagenes)) {
-                mkdir($carpetaImagenes);
+            if (!is_dir(CARPETA_IMAGENES)) {
+                mkdir(CARPETA_IMAGENES);
             }
+            // Guarda la imagen en el servidor
+            $image->save(CARPETA_IMAGENES . $nombreImagen);
 
-            // Generar un nombre unico
-            $nombreImagen = md5( uniqid( rand(), true ) ) . ".jpg";
+            // Guardar en la base datos
+            $resultado = $propiedad->guardar();
 
-            // Subir la imagen
-            move_uploaded_file($imagen['tmp_name'], $carpetaImagenes.$nombreImagen);
-
-
-            // Insertar en la base de datos
-            $query = "INSERT INTO `propiedades` (`titulo`, `precio`,`imagen`,`descripcion`, `habitaciones`, `wc`, `estacionamiento`, `creado`,`vendedores_id`) VALUES ('$titulo', '$precio', '$nombreImagen','$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado','$vendedorId')";
-
-            $resultado = mysqli_query($db, $query);
+            // Mensaje de exito o error
             if ($resultado) {
                 // Redireccionar al usuario.
                 header('Location: /admin?resultado=1');
@@ -184,7 +140,7 @@
 
         <fieldset>
             <legend>Vendedor</legend>
-            <select name="vendedor" value="<?php echo $vendedor; ?>">
+            <select name="vendedorId" value="<?php echo $vendedor; ?>">
                 <option value="">--Seleccione--</option>
                 <?php while($vendedor = mysqli_fetch_assoc($resultado)): ?>
                     <option <?php echo $vendedorId === $vendedor['id'] ? 'selected' : ''?> value="<?php echo $vendedor['id']; ?>"><?php echo $vendedor['nombre']." ".$vendedor['apellido']; ?></option>
