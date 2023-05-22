@@ -4,11 +4,12 @@
     // Restriccon de usuario por inicio de sesion
     estaAuntenticado();
 
-    // Escribir el query
-    $query = "SELECT * FROM `propiedades`";
+    use App\Propiedad;
 
-    // Consultar BD
-    $resultadoConsulta = mysqli_query($db, $query);
+    // Implementar metodo para obtener propiedades
+    $propiedades = Propiedad::all();
+
+    /* debuguear($propiedades); */
 
     // Muestra mensaje condicional
     $resultado = $_GET['resultado'] ?? null;
@@ -61,21 +62,21 @@
             </thead>
 
             <tbody> <!--. Mostrar los resultados -->
-            <?php while( $propiedad = mysqli_fetch_assoc($resultadoConsulta)): ?>
+            <?php foreach( $propiedades as $propiedad ): ?>
                 <tr>
-                    <td><?php echo $propiedad['id']; ?></td>
-                    <td><?php echo $propiedad['titulo']; ?></td>
-                    <td class="td-imagen"><img src="/imagenes/<?php echo $propiedad['imagen']; ?>" class="imagen-tabla"></td>
-                    <td>$ <?php echo $propiedad['precio']; ?></td>
+                    <td><?php echo $propiedad->id; ?></td>
+                    <td><?php echo $propiedad->titulo; ?></td>
+                    <td class="td-imagen"><img src="/imagenes/<?php echo $propiedad->imagen; ?>" class="imagen-tabla"></td>
+                    <td>$ <?php echo $propiedad->precio; ?></td>
                     <td class="botones-tabla">
                         <form method="POST" class="w-100">
-                        <input type="hidden" name="id" value="<?php echo $propiedad['id'] ?>">
+                        <input type="hidden" name="id" value="<?php echo $propiedad->id; ?>">
                         <input type="submit" class="boton-rojo" value="Eliminar">
                         </form>
-                        <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad['id']; ?>" class="boton-amarillo">Actualizar</a>
+                        <a href="/admin/propiedades/actualizar.php?id=<?php echo $propiedad->id; ?>" class="boton-amarillo">Actualizar</a>
                     </td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
             </tbody>
         </table>
     </main>

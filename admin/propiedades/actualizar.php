@@ -1,11 +1,8 @@
 <?php
-    require '../../includes/funciones.php';
+    require '../../includes/app.php';
 
     // Restriccon de usuario por inicio de sesion
-    $auth = estaAuntenticado();
-    if (!$auth) {
-        header('Location: /');
-    }
+    estaAuntenticado();
 
     // Validar la URL por ID valido
     $id = $_GET['id'];
@@ -13,10 +10,6 @@
     if(!$id){
         header('Location: /admin');
     }
-
-    // Base de datos
-    require '../../includes/config/database.php';
-    $db = conectarDB();
 
     // Obtener datos de la propiedad
     $consulta = "SELECT * FROM `propiedades` WHERE id = $id";
@@ -36,7 +29,7 @@
     $habitaciones = $propiedad['habitaciones'];
     $wc = $propiedad['wc'];
     $estacionamiento = $propiedad['estacionamiento'];
-    $vendedorId = $propiedad['vendedores_id'];
+    $vendedorId = $propiedad['vendedorId'];
     $imagenPropiedad = $propiedad['imagen'];
 
     // Toda esta seccion se utiliza para insertar datos despues de enviar el formulario
