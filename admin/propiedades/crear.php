@@ -9,6 +9,16 @@ estaAuntenticado();
 
 $db = conectarDB();
 
+<<<<<<< HEAD
+    $propiedad = new Propiedad;
+
+    // Consultar para obtener los vendedores
+    $consulta = "SELECT * FROM `vendedores`";
+    $resultado = mysqli_query($db, $consulta);
+
+    // Arreglo con mensajes de errores
+    $errores = Propiedad::getErrores();    
+=======
 $propiedad = new Propiedad;
 
 // Consultar para obtener los vendedores
@@ -17,6 +27,7 @@ $resultado = mysqli_query($db, $consulta);
 
 // Arreglo con mensajes de errores
 $errores = Propiedad::getErrores();
+>>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc
 
 
 // Toda esta seccion se utiliza para insertar datos despues de enviar el formulario
@@ -74,6 +85,15 @@ incluirTemplate('header');
         </div>
     <?php endforeach; ?>
 
+<<<<<<< HEAD
+        <form action="" class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">
+
+            <?php include '../../includes/templates/formulario_propiedades.php'; ?>
+
+            <input type="submit" value="Crear Propiedad" class="boton boton-verde">
+        </form>
+    </main>
+=======
 
     <form action="" class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">
 
@@ -82,6 +102,7 @@ incluirTemplate('header');
         <input type="submit" value="Crear Propiedad" class="boton boton-verde">
     </form>
 </main>
+>>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc
 
 <?php
 incluirTemplate('footer');

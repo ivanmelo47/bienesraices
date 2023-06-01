@@ -94,9 +94,11 @@ class Propiedad {
         if (!$this->titulo) {
             self::$errores[] = "Debes añadir un titulo";
         }
-
         if (!$this->precio) {
             self::$errores[] = "El precio es obligatorio";
+        }
+        if (!$this->imagen) {
+            self::$errores[] = "La imagen es obligatoria";
         }
         if ( strlen($this->descripcion) < 50) {
             self::$errores[] = "La descripcion es obligatoria y debe tener almenos 50 caracteres";
@@ -114,13 +116,34 @@ class Propiedad {
             self::$errores[] = "Elige un vendedor";
         }
 
-        if (!$this->imagen) {
-            self::$errores[] = "La imagen es obligatoria";
-        }
-
         return self::$errores;
     }
 
+<<<<<<< HEAD
+    // Lista todas las propiedades 
+    public static function all() {
+        $query = "SELECT * FROM propiedades";
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+    }
+
+    // Busca un registro por su id
+    public static function find($id) {
+        $query = "SELECT * FROM `propiedades` WHERE id = ${id}";
+        $resultado = self::consultarSQL($query);
+        return array_shift( $resultado );
+    }
+
+    //
+    public static function consultarSQL($query) {
+        // Consultar la base de datos
+        $resultado = self::$db->query($query);
+
+        //Iterar los resultados
+        $array = [];
+        while ($registro = $resultado->fetch_assoc()) {
+            $array[] = self::crearObjeto($registro);
+=======
     // Lista todas la propiedades
     public static function all(){
         $query = "SELECT * FROM propiedades";
@@ -138,10 +161,24 @@ class Propiedad {
         $array = [];
         while($regristro = $resultado->fetch_assoc()){
             $array[] = self::crearObjeto($regristro);
+>>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc
         }
 
         // Liberar la memoria
         $resultado->free();
+<<<<<<< HEAD
+            
+        // Retomar Los resultados
+        return $array;
+    }
+
+    //
+    protected static function crearObjeto($registro){
+        $objeto = new self;
+
+        foreach($registro as $key => $value){
+            if (property_exists($objeto, $key)) {
+=======
 
         // Retornar resultados
         return $array;
@@ -152,6 +189,7 @@ class Propiedad {
 
         foreach($regristro as $key => $value){
             if(property_exists($objeto, $key)){
+>>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc
                 $objeto->$key = $value;
             }
         }

@@ -1,7 +1,15 @@
 <?php
+<<<<<<< HEAD
+
+use App\Propiedad;
+
+require '../../includes/app.php';
+
+=======
     require '../../includes/app.php';
 
     // Restriccon de usuario por inicio de sesion
+>>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc
     estaAuntenticado();
 
     // Validar la URL por ID valido
@@ -12,9 +20,7 @@
     }
 
     // Obtener datos de la propiedad
-    $consulta = "SELECT * FROM `propiedades` WHERE id = $id";
-    $resultado = mysqli_query($db, $consulta);
-    $propiedad = mysqli_fetch_assoc($resultado);
+    $propiedad = Propiedad::find($id);
 
     // Consultar para obtener los vendedores
     $consulta = "SELECT * FROM `vendedores`";
@@ -23,6 +29,8 @@
     // Arreglo con mensajes de errores
     $errores = [];
 
+<<<<<<< HEAD
+=======
     $titulo = $propiedad['titulo'];
     $precio = $propiedad['precio'];
     $descripcion = $propiedad['descripcion'];
@@ -32,6 +40,7 @@
     $vendedorId = $propiedad['vendedorId'];
     $imagenPropiedad = $propiedad['imagen'];
 
+>>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc
     // Toda esta seccion se utiliza para insertar datos despues de enviar el formulario
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         /* echo "<pre>";
@@ -145,77 +154,11 @@
         
 
         <form action="" class="formulario" method="POST" enctype="multipart/form-data">
-        <fieldset>
-            <legend>Información General</legend>
-
-            <label for="titulo">Titulo</label>
-            <input type="text" 
-                   id="titulo" 
-                   name="titulo" 
-                   placeholder="Titulo Propiedad" 
-                   value="<?php echo $titulo; ?>">
-
-            <label for="precio">Precio</label>
-            <input type="number" 
-                   id="precio" 
-                   name="precio" 
-                   placeholder="Precio Propiedad" 
-                   value="<?php echo $precio; ?>">
-
-            <label for="imagen">Imagen</label>
-            <input type="file" 
-                   id="imagen" 
-                   accept="image/jpeg, image/png"
-                   name="imagen">
-            <img src="/imagenes/<?php echo $imagenPropiedad ?>" alt="Imagen de la propiedad" class="imagen-small">
-
-            <label for="descripcion">Descripcion:</label>
-            <textarea id="descripcion" name="descripcion"><?php echo $descripcion; ?></textarea>
             
-        </fieldset>
+            <?php include '../../includes/templates/formulario_propiedades.php'; ?>
 
-        <fieldset>
-            <legend>Información de la Propiedad</legend>
-
-            <label for="habitaciones">Habitaciones:</label>
-            <input type="number" 
-                   id="habitaciones" 
-                   name="habitaciones" 
-                   placeholder="Numero de habitaciones" 
-                   min="1" max="9" 
-                   value="<?php echo $habitaciones; ?>">
-            <label for="wc">Baños:</label>
-            <input type="number" 
-                   id="wc" name="wc" 
-                   placeholder="Numero de baños" 
-                   min="1" 
-                   max="9" 
-                   value="<?php echo $wc; ?>">
-
-            <label for="estacionamiento">Estacionamientos:</label>
-            <input type="number" 
-                   id="estacionamiento" 
-                   name="estacionamiento" 
-                   placeholder="Numero de estacionamientos" 
-                   min="1" 
-                   max="9" 
-                   value="<?php echo $estacionamiento; ?>">
-        </fieldset>
-
-        <fieldset>
-            <legend>Vendedor</legend>
-            <select name="vendedor" value="<?php echo $vendedor; ?>">
-                <option value="">--Seleccione--</option>
-
-                <?php while($vendedor = mysqli_fetch_assoc($resultado)): ?>
-                <option <?php echo $vendedorId === $vendedor['id'] ? 'selected' : ''?> value="<?php echo $vendedor['id']; ?>"><?php echo $vendedor['nombre']." ".$vendedor['apellido']; ?></option>
-                <?php endwhile; ?>
-                
-            </select>
-        </fieldset>
-
-        <input type="submit" value="Actualizar Propiedad" class="boton boton-verde">
-    </form>
+            <input type="submit" value="Actualizar Propiedad" class="boton boton-verde">
+        </form>
     </main>
 
 <?php
