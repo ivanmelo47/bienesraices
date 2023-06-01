@@ -41,6 +41,16 @@ class Propiedad {
     }
 
     public function guardar(){
+        if (isset($this->id)) {
+            // Actualizar
+            $this->actualizar();
+        } else {
+            // Creando un nuevo registro
+            $this->crear();
+        }
+    }
+
+    public function crear(){
         //Sanitizar los datos
         $atributos = $this->sanitizarAtributos();
 
@@ -56,6 +66,40 @@ class Propiedad {
 
         return $resultado;
     }
+
+    public function actualizar() {
+        //Sanitizar los datos
+        $atributos = $this->sanitizarAtributos();
+
+        $valores = [];
+        foreach ($atributos as $key => $value) {
+            $valores[] = "{$key}='{$value}'";
+        }
+        $query = "UPDATE `propiedades` SET "; 
+        $query .= join(', ', $valores); 
+        $query .= " WHERE `id` = '" . self::$db->escape_string($this->id) . "' ";
+        $query .= " LIMIT 1 ";
+
+        $resultado = self::$db->query($query);
+
+        if ($resultado) {
+            // Redireccionar al usuario.
+            header('Location: /admin?resultado=2');
+        }
+    }
+
+    // Eliminar un registro
+    public function eliminar() {
+        //Eliminar la propiedad
+        $query = "DELETE FROM propiedades WHERE id = " . self::$db->escape_string($this->id) . " LIMIT 1";
+        $resultado = self::$db->query($query);
+
+        if ($resultado) {
+           $this->borrarImagen();
+            header('Location: /admin?resultado=3');
+        }
+    }
+
     // Identificar y unir los atributos de la BD
     public function atributos(){
         $atributos = [];
@@ -77,11 +121,25 @@ class Propiedad {
         return $sanitizado;
     }
 
-    // Subidad d archivos
+    // Subidad de archivos
     public function setImagen($imagen){
+        // Elimina la imagen previa
+        if (isset($this->id)) {
+            $this->borrarImagen();
+        }
+
         // Asignar al atributo de imagen el nombre de la imagen
         if($imagen){
             $this->imagen = $imagen;
+        }
+    }
+
+    //Eliminar archivo
+    public function borrarImagen() {
+        // Comprobar si exite el archivo
+        $existeArchivo = file_exists(CARPETA_IMAGENES . $this->imagen);
+        if ($existeArchivo) {
+            unlink(CARPETA_IMAGENES . $this->imagen);
         }
     }
 
@@ -119,7 +177,6 @@ class Propiedad {
         return self::$errores;
     }
 
-<<<<<<< HEAD
     // Lista todas las propiedades 
     public static function all() {
         $query = "SELECT * FROM propiedades";
@@ -143,30 +200,10 @@ class Propiedad {
         $array = [];
         while ($registro = $resultado->fetch_assoc()) {
             $array[] = self::crearObjeto($registro);
-=======
-    // Lista todas la propiedades
-    public static function all(){
-        $query = "SELECT * FROM propiedades";
-
-        $resultado = self::consultarSQL($query);
-
-        return $resultado;
-    }
-
-    public static function consultarSQL($query){
-        // Consulta la base de datos
-        $resultado = self::$db->query($query);
-
-        // Iterar resultados
-        $array = [];
-        while($regristro = $resultado->fetch_assoc()){
-            $array[] = self::crearObjeto($regristro);
->>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc
         }
 
         // Liberar la memoria
         $resultado->free();
-<<<<<<< HEAD
             
         // Retomar Los resultados
         return $array;
@@ -178,22 +215,19 @@ class Propiedad {
 
         foreach($registro as $key => $value){
             if (property_exists($objeto, $key)) {
-=======
-
-        // Retornar resultados
-        return $array;
-    }
-
-    protected static function crearObjeto($regristro){
-        $objeto = new self;
-
-        foreach($regristro as $key => $value){
-            if(property_exists($objeto, $key)){
->>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc
                 $objeto->$key = $value;
             }
         }
 
         return $objeto;
+    }
+
+    // Sincroniza el objeto en memoria con los cambios realizados por el usuario
+    public function sincronizar( $args = [] ) {
+        foreach($args as $key => $value){
+            if(property_exists($this, $key) && !is_null($value)){
+                $this->$key = $value;
+            }
+        }
     }
 }

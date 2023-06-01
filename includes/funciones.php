@@ -26,14 +26,7 @@ function debuguear($variable) {
 }
 
 // Escapa / Sanitizar el HTML
-<<<<<<< HEAD
 function s($html) : string{
     $s = htmlspecialchars($html);
     return $s;
 }
-=======
-function s($html) : string {
-    $s = htmlspecialchars($html);
-    return $s;
-}
->>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc

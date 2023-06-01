@@ -9,7 +9,6 @@ estaAuntenticado();
 
 $db = conectarDB();
 
-<<<<<<< HEAD
     $propiedad = new Propiedad;
 
     // Consultar para obtener los vendedores
@@ -18,22 +17,12 @@ $db = conectarDB();
 
     // Arreglo con mensajes de errores
     $errores = Propiedad::getErrores();    
-=======
-$propiedad = new Propiedad;
-
-// Consultar para obtener los vendedores
-$consulta = "SELECT * FROM `vendedores`";
-$resultado = mysqli_query($db, $consulta);
-
-// Arreglo con mensajes de errores
-$errores = Propiedad::getErrores();
->>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc
 
 
 // Toda esta seccion se utiliza para insertar datos despues de enviar el formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //Crea una nueva instancia
-    $propiedad = new Propiedad($_POST);
+    $propiedad = new Propiedad($_POST['propiedad']);
 
     /* Subida de archivos */
 
@@ -41,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombreImagen = md5(uniqid(rand(), true)) . ".jpg";
     // Setear imagen
     //Realizar un resize a la imagen con Intervention
-    if ($_FILES['imagen']['tmp_name']) {
-        $image = Image::make($_FILES['imagen']['tmp_name'])->fit(800, 600);
+    if ($_FILES['propiedad']['tmp_name']['imagen']) {
+        $image = Image::make($_FILES['propiedad']['tmp_name']['imagen'])->fit(800, 600);
         //Entrega el nombre de la imagen
         $propiedad->setImagen($nombreImagen);
     }
@@ -85,7 +74,6 @@ incluirTemplate('header');
         </div>
     <?php endforeach; ?>
 
-<<<<<<< HEAD
         <form action="" class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">
 
             <?php include '../../includes/templates/formulario_propiedades.php'; ?>
@@ -93,16 +81,6 @@ incluirTemplate('header');
             <input type="submit" value="Crear Propiedad" class="boton boton-verde">
         </form>
     </main>
-=======
-
-    <form action="" class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">
-
-    <?php include '../../includes/templates/formulario_propiedades.php' ?>
-
-        <input type="submit" value="Crear Propiedad" class="boton boton-verde">
-    </form>
-</main>
->>>>>>> d93a9d0de689121d67b4fe4af29b57b450f9b3fc
 
 <?php
 incluirTemplate('footer');
