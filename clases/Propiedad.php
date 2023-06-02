@@ -28,7 +28,7 @@ class Propiedad {
     }
     
     public function __construct($args = []){
-        $this->id = $args['id'] ?? '';
+        $this->id = $args['id'] ?? null;
         $this->titulo = $args['titulo'] ?? '';
         $this->precio = $args['precio'] ?? '';
         $this->imagen = $args['imagen'] ?? '';
@@ -41,7 +41,8 @@ class Propiedad {
     }
 
     public function guardar(){
-        if (isset($this->id)) {
+        
+        if (!is_null($this->id)) {
             // Actualizar
             $this->actualizar();
         } else {
@@ -64,7 +65,11 @@ class Propiedad {
 
         $resultado = self::$db->query($query);
 
-        return $resultado;
+        // Mensaje de exito o error
+        if ($resultado) {
+            // Redireccionar al usuario.
+            header('Location: /admin?resultado=1');
+        }
     }
 
     public function actualizar() {
@@ -124,7 +129,7 @@ class Propiedad {
     // Subidad de archivos
     public function setImagen($imagen){
         // Elimina la imagen previa
-        if (isset($this->id)) {
+        if (!is_null($this->id)) {
             $this->borrarImagen();
         }
 
