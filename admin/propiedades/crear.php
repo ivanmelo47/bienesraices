@@ -2,21 +2,20 @@
 require '../../includes/app.php';
 
 use App\Propiedad;
+use App\Vendedor;
 use Intervention\Image\ImageManagerStatic as Image; //https://image.intervention.io/v2/introduction/installation
 
 // Restriccon de usuario por inicio de sesion
 estaAuntenticado();
 
-$db = conectarDB();
+$propiedad = new Propiedad;
 
-    $propiedad = new Propiedad;
+// Consulta para obtener todos los vendedores
+$vendedores = Vendedor::all();
+/* debuguear($vendedores); */
 
-    // Consultar para obtener los vendedores
-    $consulta = "SELECT * FROM `vendedores`";
-    $resultado = mysqli_query($db, $consulta);
-
-    // Arreglo con mensajes de errores
-    $errores = Propiedad::getErrores();    
+// Arreglo con mensajes de errores
+$errores = Propiedad::getErrores();     
 
 
 // Toda esta seccion se utiliza para insertar datos despues de enviar el formulario
@@ -48,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             mkdir(CARPETA_IMAGENES);
         }
         // Guarda la imagen en el servidor
-        $image->save(CARPETA_IMAGENES . $nombreImagen);
+        $image->save(CARPETA_IMAGENES . "propiedades/" . $nombreImagen);
 
         // Guardar en la base datos
         $propiedad->guardar();
